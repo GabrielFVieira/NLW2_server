@@ -16,8 +16,11 @@ class Schedule {
     to: number;
 
     @ManyToOne(type => Classes, class_id => class_id.schedules)
-    @JoinColumn({name: 'class_id'})
+    @JoinColumn({ name: 'class_id' })
     school_class: Classes;
+
+    from_formated?: string;
+    to_formated?: string;
 }
 
 export default Schedule;

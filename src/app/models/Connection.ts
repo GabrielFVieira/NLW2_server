@@ -9,11 +9,11 @@ class Connection {
     id: string;
 
     @OneToOne(type => User, user => user.id)
-    @JoinColumn({name: 'user_id'})
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
     @OneToOne(type => Classes, school_class => school_class.id)
-    @JoinColumn({name: 'class_id'})
+    @JoinColumn({ name: 'class_id' })
     school_class: Classes;
 }
 

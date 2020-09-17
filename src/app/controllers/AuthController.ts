@@ -6,29 +6,29 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
 class AuthController {
-    async authenticate(req: Request, res: Response) {
-        const repository = getRepository(User);
-        const { email, password } = req.body;
+	async authenticate(req: Request, res: Response) {
+		const repository = getRepository(User);
+		const { email, password } = req.body;
 
-        const user = await repository.findOne({ where: { email } })
+		const user = await repository.findOne({ where: { email } });
 
-        if(!user) {
-            return res.status(404).json({ error: "User does not exists" });
-        }
-    
-        const isValidPassword = await bcrypt.compare(password, user.password);
+		if (!user) {
+			return res.status(404).json({ error: 'User does not exists' });
+		}
 
-        if(!isValidPassword) {
-            return res.status(401).json({ error: "Invalid password" });
-        }
+		const isValidPassword = await bcrypt.compare(password, user.password);
 
-        const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '2h'});
+		if (!isValidPassword) {
+			return res.status(401).json({ error: 'Invalid password' });
+		}
 
-        return res.status(200).json({
-            user,
-            token
-        });
-    }
+		const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1d' });
+
+		return res.status(200).json({
+			user,
+			token,
+		});
+	}
 }
 
 export default new AuthController();

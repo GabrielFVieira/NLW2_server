@@ -13,11 +13,11 @@ class Classes {
 
     @Column()
     description?: string;
-    
+
     @OneToOne(type => Subject, subject => subject.id, {
         cascade: true
     })
-    @JoinColumn({name: 'subject_id'})
+    @JoinColumn({ name: 'subject_id' })
     subject: Subject;
 
     @OneToMany(type => Schedule, schedule => schedule.school_class, {
@@ -26,7 +26,7 @@ class Classes {
     schedules: Schedule[];
 
     @ManyToOne(type => User, user => user.classes)
-    @JoinColumn({name: 'user_id'})
+    @JoinColumn({ name: 'user_id' })
     user: User;
 }
 

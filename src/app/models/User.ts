@@ -36,7 +36,9 @@ class User {
     @BeforeInsert()
     @BeforeUpdate()
     hashPassword() {
-        this.password = bcrypt.hashSync(this.password, 8);
+        if(this.password) {
+            this.password = bcrypt.hashSync(this.password, 8);
+        }
     }
 }
 
