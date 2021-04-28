@@ -47,6 +47,12 @@ export class CreateUsersTable1598583786395 implements MigrationInterface {
 						type: 'varchar',
 						isNullable: true,
 					},
+					{
+						name: 'resetPasswordToken',
+						type: 'varchar',
+						isNullable: true,
+						isUnique: true,
+					},
 				],
 			})
 		);

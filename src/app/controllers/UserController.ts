@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
+import bcrypt from 'bcryptjs';
+import convertToReturnUser from '../../utils/convertToReturnUser';
 
 import User from '../models/User';
 
@@ -23,7 +25,7 @@ class UserController {
 		const user = repository.create({ email, password, name, surname });
 		await repository.save(user);
 
-		return res.status(200).json(user);
+		return res.status(200).json(convertToReturnUser(user));
 	}
 
 	async update(req: Request, res: Response) {
@@ -49,8 +51,56 @@ class UserController {
 		await repository.update(id, userUpdate);
 
 		const userBD = await repository.findOne({ where: { id } });
+		if (!userBD) {
+			return res.status(404).json({ error: 'Error while updating user' });
+		}
 
-		return res.status(200).json(userBD);
+		return res.status(200).json(convertToReturnUser(userBD));
+	}
+
+	async changePassword(req: Request, res: Response) {
+		const repository = getRepository(User);
+		const id = req.userId;
+
+		const user = await repository.findOne({ where: { id } });
+
+		if (!id || !user) {
+			return res.status(404).json({ error: 'User do not exists' });
+		}
+
+		const { password, oldPassword } = req.body;
+
+		const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+
+		if (!isValidPassword) {
+			return res.status(401).json({ error: 'The old password is invalid' });
+		}
+
+		user.password = password;
+		user.resetPasswordToken = null;
+
+		await repository.save(user);
+
+		return res.send();
+	}
+
+	async resetPassword(req: Request, res: Response) {
+		const repository = getRepository(User);
+		const id = req.userId;
+
+		const user = await repository.findOne({ where: { id } });
+
+		if (!id || !user) {
+			return res.status(404).json({ error: 'User do not exists' });
+		}
+
+		const { password } = req.body;
+		user.password = password;
+		user.resetPasswordToken = null;
+
+		await repository.save(user);
+
+		return res.send();
 	}
 }
 

@@ -28,6 +28,13 @@ class User {
 	@Column()
 	avatar?: string;
 
+	@Column({
+		type: 'text',
+		unique: true,
+		nullable: true,
+	})
+	resetPasswordToken?: string | null;
+
 	@OneToMany(type => Classes, classes => classes.user, {
 		cascade: true,
 	})
@@ -39,6 +46,10 @@ class User {
 		if (this.password) {
 			this.password = bcrypt.hashSync(this.password, 8);
 		}
+	}
+
+	getCompleteName() {
+		return `${this.name} ${this.surname}`;
 	}
 }
 

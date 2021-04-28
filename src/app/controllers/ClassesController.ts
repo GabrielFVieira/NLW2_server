@@ -119,8 +119,6 @@ class ClassesController {
 
 		await Promise.all(promises);
 
-		console.log(insertedClasses);
-
 		return res.status(200).json(insertedClasses);
 	}
 
