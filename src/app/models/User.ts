@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import Classes from './Classes';
 
@@ -41,11 +41,14 @@ class User {
 	classes: Classes[];
 
 	@BeforeInsert()
-	@BeforeUpdate()
-	hashPassword() {
+	private generateHashPassword() {
 		if (this.password) {
-			this.password = bcrypt.hashSync(this.password, 8);
+			this.setPassword(this.password);
 		}
+	}
+
+	setPassword(password: string) {
+		this.password = bcrypt.hashSync(password, 8);
 	}
 
 	getCompleteName() {

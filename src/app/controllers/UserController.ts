@@ -76,7 +76,7 @@ class UserController {
 			return res.status(401).json({ error: 'The old password is invalid' });
 		}
 
-		user.password = password;
+		user.setPassword(password);
 		user.resetPasswordToken = null;
 
 		await repository.save(user);
@@ -95,7 +95,7 @@ class UserController {
 		}
 
 		const { password } = req.body;
-		user.password = password;
+		user.setPassword(password);
 		user.resetPasswordToken = null;
 
 		await repository.save(user);
