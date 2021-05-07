@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import AppBaseEntity from './AppBaseEntity';
 
 @Entity('subjects')
-class Subject {
+class Subject extends AppBaseEntity {
 	@PrimaryGeneratedColumn('increment')
 	id: string;
 

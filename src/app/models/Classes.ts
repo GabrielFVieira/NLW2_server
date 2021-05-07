@@ -2,9 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne
 import Subject from './Subject';
 import Schedule from './Schedule';
 import User from './User';
+import AppBaseEntity from './AppBaseEntity';
 
 @Entity('classes')
-class Classes {
+class Classes extends AppBaseEntity {
 	@PrimaryGeneratedColumn('increment')
 	id: string;
 

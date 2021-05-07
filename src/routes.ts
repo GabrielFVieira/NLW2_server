@@ -10,7 +10,11 @@ import UserController from './app/controllers/UserController';
 import AuthController from './app/controllers/AuthController';
 import recoveryMiddleware from './app/middlewares/recoveryMiddleware';
 
+import uploadConfig from './app/config/upload';
+import multer from 'multer';
+
 const routes = express.Router();
+const upload = multer(uploadConfig);
 
 routes.get('/user-classes', authMiddleware, ClassesController.find);
 routes.get('/classes', ClassesController.index);
@@ -27,7 +31,7 @@ routes.post('/connections', authMiddleware, ConnectionsController.create);
 
 routes.get('/user', authMiddleware, UserController.index);
 routes.post('/user', UserController.create);
-routes.put('/user', authMiddleware, UserController.update);
+routes.put('/user', authMiddleware, upload.single('avatar'), UserController.update);
 routes.post('/user/changePassword', authMiddleware, UserController.changePassword);
 
 routes.post('/auth', AuthController.authenticate);

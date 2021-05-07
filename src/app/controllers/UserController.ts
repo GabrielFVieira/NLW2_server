@@ -1,13 +1,18 @@
 import { Request, Response } from 'express';
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcryptjs';
-import convertToReturnUser from '../../utils/convertToReturnUser';
 
 import User from '../models/User';
 
 class UserController {
-	index(req: Request, res: Response) {
-		return res.status(200).send({ userID: req.userId });
+	async index(req: Request, res: Response) {
+		const repository = getRepository(User);
+		const id = req.userId;
+		console.log(id);
+
+		const user = await repository.findOne({ where: { id } });
+
+		return res.status(200).json(user);
 	}
 
 	async create(req: Request, res: Response) {
@@ -20,12 +25,11 @@ class UserController {
 			return res.status(409).json({ error: 'User already exists' });
 		}
 
-		const { password, name, surname } = req.body;
-
-		const user = repository.create({ email, password, name, surname });
+		const { password: password_raw, name, surname } = req.body;
+		const user = repository.create({ email, password_raw, name, surname });
 		await repository.save(user);
 
-		return res.status(200).json(convertToReturnUser(user));
+		return res.status(200).json(user);
 	}
 
 	async update(req: Request, res: Response) {
@@ -38,15 +42,19 @@ class UserController {
 			return res.status(404).json({ error: 'User do not exists' });
 		}
 
-		const { name, surname, bio, whatsapp, avatar } = req.body;
+		const { name, surname, bio, whatsapp } = req.body;
 
 		const userUpdate = repository.create({
 			name,
 			surname,
 			bio,
 			whatsapp,
-			avatar,
 		});
+
+		if (req.file) {
+			const { filename } = req.file;
+			userUpdate.avatar_raw = filename;
+		}
 
 		await repository.update(id, userUpdate);
 
@@ -55,7 +63,7 @@ class UserController {
 			return res.status(404).json({ error: 'Error while updating user' });
 		}
 
-		return res.status(200).json(convertToReturnUser(userBD));
+		return res.status(200).json(userBD);
 	}
 
 	async changePassword(req: Request, res: Response) {
@@ -76,7 +84,7 @@ class UserController {
 			return res.status(401).json({ error: 'The old password is invalid' });
 		}
 
-		user.setPassword(password);
+		user.password = password;
 		user.resetPasswordToken = null;
 
 		await repository.save(user);
@@ -95,7 +103,7 @@ class UserController {
 		}
 
 		const { password } = req.body;
-		user.setPassword(password);
+		user.password = password;
 		user.resetPasswordToken = null;
 
 		await repository.save(user);

@@ -1,17 +1,21 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany } from 'typeorm';
 import bcrypt from 'bcryptjs';
+import ip from 'ip';
 import Classes from './Classes';
+import { Exclude, Expose } from 'class-transformer';
+import AppBaseEntity from './AppBaseEntity';
 
 @Entity('users')
-class User {
+class User extends AppBaseEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
 	@Column()
 	email: string;
 
-	@Column()
-	password: string;
+	@Column({ name: 'password' })
+	@Exclude()
+	password_raw: string;
 
 	@Column()
 	name: string;
@@ -25,14 +29,16 @@ class User {
 	@Column()
 	whatsapp?: string;
 
-	@Column()
-	avatar?: string;
+	@Column({ name: 'avatar' })
+	@Exclude()
+	avatar_raw?: string;
 
 	@Column({
 		type: 'text',
 		unique: true,
 		nullable: true,
 	})
+	@Exclude()
 	resetPasswordToken?: string | null;
 
 	@OneToMany(type => Classes, classes => classes.user, {
@@ -42,17 +48,30 @@ class User {
 
 	@BeforeInsert()
 	private generateHashPassword() {
-		if (this.password) {
-			this.setPassword(this.password);
+		if (this.password_raw) {
+			this.password = this.password_raw;
 		}
 	}
 
-	setPassword(password: string) {
-		this.password = bcrypt.hashSync(password, 8);
+	get password() {
+		return this.password_raw;
+	}
+
+	set password(password: string) {
+		this.password_raw = bcrypt.hashSync(password, 8);
 	}
 
 	getCompleteName() {
 		return `${this.name} ${this.surname}`;
+	}
+
+	@Expose()
+	get avatar() {
+		if (!this.avatar_raw) {
+			return undefined;
+		}
+
+		return `http://${ip.address()}:3333/files/${this.avatar_raw}`;
 	}
 }
 

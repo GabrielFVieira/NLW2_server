@@ -1,26 +1,38 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import AppBaseEntity from './AppBaseEntity';
 import Classes from './Classes';
+import { Exclude, Expose } from 'class-transformer';
+import convertMinutesToHour from '../../utils/convertMinutesToHour';
 
 @Entity('schedules')
-class Schedule {
+class Schedule extends AppBaseEntity {
 	@PrimaryGeneratedColumn('increment')
 	id: string;
 
 	@Column()
 	week_day: number;
 
-	@Column()
-	from: number;
+	@Column({ name: 'from' })
+	@Exclude()
+	from_raw: number;
 
-	@Column()
-	to: number;
+	@Column({ name: 'to' })
+	@Exclude()
+	to_raw: number;
 
 	@ManyToOne(type => Classes, class_id => class_id.schedules)
 	@JoinColumn({ name: 'class_id' })
 	school_class: Classes;
 
-	from_formated?: string;
-	to_formated?: string;
+	@Expose()
+	get from() {
+		return convertMinutesToHour(this.from_raw);
+	}
+
+	@Expose()
+	get to() {
+		return convertMinutesToHour(this.to_raw);
+	}
 }
 
 export default Schedule;

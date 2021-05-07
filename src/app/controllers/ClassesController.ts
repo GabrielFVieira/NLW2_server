@@ -3,7 +3,6 @@ import { getRepository, getManager } from 'typeorm';
 
 import Classes from '../models/Classes';
 import convertHourToMinutes from '../../utils/convertHourToMinutes';
-import convertMinutesToHour from '../../utils/convertMinutesToHour';
 import Schedule from '../models/Schedule';
 
 class ClassesController {
@@ -14,18 +13,6 @@ class ClassesController {
 		const classes = await repository.find({
 			where: { user },
 			relations: ['subject', 'schedules'],
-		});
-
-		classes.forEach(classe => {
-			const schedules = classe?.schedules.map(schedule => {
-				schedule.from_formated = convertMinutesToHour(schedule.from);
-				schedule.to_formated = convertMinutesToHour(schedule.to);
-				return schedule;
-			});
-
-			if (schedules && classe) {
-				classe.schedules = schedules;
-			}
 		});
 
 		return res.status(200).json(classes);
@@ -64,18 +51,6 @@ class ClassesController {
 			.where(whereClause, { time: convertedTime, week_day, subject })
 			.getMany();
 
-		classes.forEach(classe => {
-			const schedules = classe?.schedules.map(schedule => {
-				schedule.from_formated = convertMinutesToHour(schedule.from);
-				schedule.to_formated = convertMinutesToHour(schedule.to);
-				return schedule;
-			});
-
-			if (schedules && classe) {
-				classe.schedules = schedules;
-			}
-		});
-
 		return res.status(200).json(classes);
 	}
 
@@ -99,8 +74,8 @@ class ClassesController {
 				return {
 					id: scheduleItem.id,
 					week_day: scheduleItem.week_day,
-					from: convertHourToMinutes(scheduleItem.from_formated ? scheduleItem.from_formated : '0'),
-					to: convertHourToMinutes(scheduleItem.to_formated ? scheduleItem.to_formated : '0'),
+					from_raw: convertHourToMinutes(scheduleItem.from ? scheduleItem.from : '0'),
+					to_raw: convertHourToMinutes(scheduleItem.to ? scheduleItem.to : '0'),
 				};
 			});
 

@@ -6,7 +6,6 @@ import { resolve } from 'path';
 
 import SendMailService from '../services/SendMailService';
 import User from '../models/User';
-import convertToReturnUser from '../../utils/convertToReturnUser';
 
 class AuthController {
 	async authenticate(req: Request, res: Response) {
@@ -28,7 +27,7 @@ class AuthController {
 		const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1d' });
 
 		return res.status(200).json({
-			user: convertToReturnUser(user),
+			user: user,
 			token,
 		});
 	}

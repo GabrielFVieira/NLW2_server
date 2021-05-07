@@ -2,9 +2,10 @@ import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
 
 import User from './User';
 import Classes from './Classes';
+import AppBaseEntity from './AppBaseEntity';
 
 @Entity('connections')
-class Connection {
+class Connection extends AppBaseEntity {
 	@PrimaryGeneratedColumn('increment')
 	id: string;
 
