@@ -4,6 +4,7 @@ import { getRepository, getManager } from 'typeorm';
 import Classes from '../models/Classes';
 import convertHourToMinutes from '../../utils/convertHourToMinutes';
 import Schedule from '../models/Schedule';
+import Subject from '../models/Subject';
 
 class ClassesController {
 	async find(req: Request, res: Response) {
@@ -56,6 +57,7 @@ class ClassesController {
 
 	async create(req: Request, res: Response) {
 		const repository = getRepository(Classes);
+		const subjectRepository = getRepository(Subject);
 
 		const user = { id: req.userId };
 		const classes = [] as Classes[];
@@ -68,7 +70,20 @@ class ClassesController {
 		}
 
 		const promises = classes.map(async classe => {
-			const { id, cost, description, subject, schedules } = classe;
+			const { id, cost, description, schedules } = classe;
+			let { subject } = classe;
+
+			if (subject.id) {
+				const subjectExists = await subjectRepository.findOne({ where: { id: subject.id } });
+				if (!subjectExists) {
+					return;
+				}
+			} else if (subject.name) {
+				subject = subjectRepository.create({ name: subject.name });
+				await subjectRepository.save(subject);
+			} else {
+				return;
+			}
 
 			const classSchedule = schedules.map((scheduleItem: Schedule) => {
 				return {
