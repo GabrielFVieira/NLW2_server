@@ -71,7 +71,7 @@ class User extends AppBaseEntity {
 			return undefined;
 		}
 
-		return `http://${ip.address()}:3333/files/${this.avatar_raw}`;
+		return `${process.env.SERVER_URL}/files/${this.avatar_raw}`;
 	}
 }
 
