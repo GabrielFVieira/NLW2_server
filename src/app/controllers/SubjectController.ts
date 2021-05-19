@@ -6,7 +6,7 @@ import Subject from '../models/Subject';
 class SubjectController {
 	async index(req: Request, res: Response) {
 		const repository = getRepository(Subject);
-		const subjects = await repository.find();
+		const subjects = await repository.find({ order: { name: 'ASC' } });
 
 		return res.status(200).json(subjects);
 	}
