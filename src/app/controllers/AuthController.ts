@@ -46,7 +46,7 @@ class AuthController {
 		user.resetPasswordToken = token;
 		repository.save(user);
 
-		const mailPath = resolve(__dirname, '..', 'views', 'emails', 'passwordRecoveryMail.hbs');
+		const mailPath = resolve(__dirname, '..', '..', '..', 'templates', 'emails', 'passwordRecoveryMail.hbs');
 
 		const variables = {
 			name: user.getCompleteName(),
