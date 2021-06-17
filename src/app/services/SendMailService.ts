@@ -35,6 +35,8 @@ class SendMailService {
 		});
 
 		console.log('Preview URL: %s', nodemailer.getTestMessageUrl(message));
+
+		return nodemailer.getTestMessageUrl(message);
 	}
 }
 

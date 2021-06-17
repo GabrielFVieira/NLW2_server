@@ -53,10 +53,11 @@ class AuthController {
 			link: `${recoveryPage}/${token}`,
 			time: '15 minutos',
 		};
-
-		await SendMailService.execute(email, 'Recuperação de senha', variables, mailPath);
-
-		return res.send();
+		
+		// Sending link to the fake email for test purposes
+		const link = await SendMailService.execute(email, 'Recuperação de senha', variables, mailPath);
+		
+		return res.json({ recoveryLink: link });
 	}
 }
 
