@@ -126,7 +126,7 @@ class ClassesController {
 
 		if (classe) {
 			if (classe.user.id != user) {
-				return res.status(401).json({ error: 'This class do not belongs to the current user' });
+				return res.status(403).json({ error: 'This class do not belongs to the current user' });
 			}
 
 			if (classe.schedules && classe.schedules.length > 0) {

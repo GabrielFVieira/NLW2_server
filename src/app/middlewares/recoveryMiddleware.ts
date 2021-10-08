@@ -13,7 +13,7 @@ export default async function recoveryMiddleware(req: Request, res: Response, ne
 	const { authorization } = req.headers;
 
 	if (!authorization) {
-		return res.status(401).json({ error: 'Invalid credentials' });
+		return res.status(403).json({ error: 'Invalid credentials' });
 	}
 
 	const token = authorization.replace('Bearer', '').trim();
@@ -31,7 +31,7 @@ export default async function recoveryMiddleware(req: Request, res: Response, ne
 		}
 
 		if (user.resetPasswordToken != token) {
-			return res.status(401).json({ error: 'The given token is invalid' });
+			return res.status(403).json({ error: 'The given token is invalid' });
 		}
 
 		req.userId = user.id;

@@ -81,7 +81,7 @@ class UserController {
 		const isValidPassword = await bcrypt.compare(oldPassword, user.password);
 
 		if (!isValidPassword) {
-			return res.status(401).json({ error: 'The old password is invalid' });
+			return res.status(403).json({ error: 'The old password is invalid' });
 		}
 
 		user.password = password;

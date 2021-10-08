@@ -21,7 +21,7 @@ class AuthController {
 		const isValidPassword = await bcrypt.compare(password, user.password);
 
 		if (!isValidPassword) {
-			return res.status(401).json({ error: 'Invalid password' });
+			return res.status(403).json({ error: 'Invalid password' });
 		}
 
 		const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1d' });
@@ -53,10 +53,10 @@ class AuthController {
 			link: `${recoveryPage}/${token}`,
 			time: '15 minutos',
 		};
-		
+
 		// Sending link to the fake email for test purposes
 		const link = await SendMailService.execute(email, 'Recuperação de senha', variables, mailPath);
-		
+
 		return res.json({ recoveryLink: link });
 	}
 }
